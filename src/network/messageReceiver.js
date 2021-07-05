@@ -1,10 +1,17 @@
 const {TextChannel} = require("discord.js");
 const Net = require("net");
 
+/**
+ * A class which listens for messages over TCP and forwards them to Discord
+ */
 class MessageReceiver {
 	#socketServer;
 	#boundChannels;
 
+	/**
+	 * Opens a new server socket on a specified port
+	 * @param {number} port The port the server socket should bind to
+	 */
 	constructor(port) {
 		this.#socketServer = new Net.Server();
 		this.#boundChannels = [];
@@ -13,9 +20,14 @@ class MessageReceiver {
 		this.#socketServer.on("connection", this.#onConnection.bind(this));
 	}
 
+	/**
+	 * Gets called when a message is received on the server socket and forwards said message
+	 * to Discord
+	 * @param {Net.Socket} socket 
+	 */
 	#onConnection(socket) {
 		socket.on("data", chunk => this.#boundChannels.forEach(channel => {
-			var jsonObj = JSON.parse(chunk.toString());
+			var jsonObj = JSON.parse(chunk.toString()); // A message will never be larger than a chunk can handle so this should be fine
 			var msg = (jsonObj["sender"] === undefined) ? jsonObj["message"] : `${jsonObj["sender"]}: ${jsonObj["message"]}`
 			channel.send(msg);
 		}));
