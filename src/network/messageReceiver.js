@@ -69,6 +69,14 @@ class MessageReceiver {
 		var elementIndex = this.#boundChannels.indexOf(channel);
 		this.#boundChannels.splice(elementIndex, 1);
 	}
+
+	/**
+	 * Checks if a certain channel is bound to the bound Minecraft server text chat
+	 * @param {TextChannel} channel The channel to check
+	 */
+	isBound(channel) {
+		return this.#boundChannels.indexOf(channel) != -1;
+	}
 }
 
 module.exports = MessageReceiver;

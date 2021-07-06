@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const client = new Discord.Client();
 const MessageReceiver = require("./network/messageReceiver.js");
+const MessageTransmitter = require("./network/messageTransmitter.js");
 
 class Bot {
 	#commands = ["--bindchannel", "--unbindchannel"].sort();
@@ -32,6 +33,9 @@ class Bot {
 	 * @param {Discord.Message} msg
 	 */
 	#messageHandler(msg) {
+		if (msg.author.bot)
+			return;
+
 		switch (msg.content) {
 			case "--bindchannel":
 				this.#msgRecv.bindChannel(msg.channel);
@@ -43,6 +47,19 @@ class Bot {
 				var response = "";
 				this.#commands.forEach(commandStr => response += `\`${commandStr}\`: ${this.#commandHelp[commandStr]}\n`);
 				msg.channel.send(response.slice(0, response.length-1));
+				break;
+			default:
+				if (!this.#msgRecv.isBound(msg.channel))
+					break;
+
+				MessageTransmitter.transmit(
+					"127.0.0.1",
+					501,
+					{
+						sender: msg.member.displayName,
+						message: msg.content
+					}
+				);
 				break;
 		}
 	}
