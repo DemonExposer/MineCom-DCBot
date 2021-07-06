@@ -5,10 +5,11 @@ const MessageReceiver = require("./network/messageReceiver.js");
 const MessageTransmitter = require("./network/messageTransmitter.js");
 
 class Bot {
-	#commands = ["--bindchannel", "--unbindchannel"].sort();
+	#commands = ["--bindchannel", "--unbindchannel", "--isbound"].sort();
 	#commandHelp = {
 		"--bindchannel": "Binds this text channel to the MC server chat",
-		"--unbindchannel": "Unbinds this text channel to the MC server chat"
+		"--unbindchannel": "Unbinds this text channel to the MC server chat",
+		"--isbound": "Checks if this text channel is bound to the MC server chat"
 	};
 	#msgRecv;
 	#txAddress;
@@ -30,7 +31,7 @@ class Bot {
 		client.on("ready", () => {
 			console.log("Connected as " + client.user.tag);
 			client.user.setActivity("type --help for help");
-			
+
 			// Reads from this.#BOUND_CHANNELS_FILE and if it doesn't exist, it creates it, if it does exist, it binds all the channels
 			fs.stat(this.#BOUND_CHANNELS_FILE, (err, _) => (err != null) ? fs.writeFile(this.#BOUND_CHANNELS_FILE, "[]", err => err && console.log(err)) : fs.readFile(this.#BOUND_CHANNELS_FILE, (_, data) => JSON.parse(data.toString()).forEach(async channelID => this.#msgRecv.bindChannel(await client.channels.fetch(channelID)))));
 		});
@@ -53,6 +54,9 @@ class Bot {
 				break;
 			case "--unbindchannel":
 				this.#msgRecv.unbindChannel(msg.channel);
+				break;
+			case "--isbound":
+				msg.channel.send(this.#msgRecv.isBound(msg.channel));
 				break;
 			case "--help":
 				var response = "";
