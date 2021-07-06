@@ -10,14 +10,20 @@ class Bot {
 		"--unbindchannel": "Unbinds this text channel to the MC server chat"
 	};
 	#msgRecv;
+	#txAddress;
+	#txPort;
 
 	/**
 	 * Creates a new instance of this bot
 	 * @param {String} discordToken The bot token you got from discord
-	 * @param {number} port The port the bot should listen on
+	 * @param {number} rxPort The port the bot should listen on
+	 * @param {String} txAddress The host name of the plugin
+	 * @param {number} txPort The port the plugin is listening on
 	 */
-	constructor(discordToken, port) {
-		this.#msgRecv = new MessageReceiver(port);
+	constructor(discordToken, rxPort = 500, txAddress = "127.0.0.1", txPort = 501) {
+		this.#txAddress = txAddress;
+		this.#txPort = txPort;
+		this.#msgRecv = new MessageReceiver(rxPort);
 
 		client.on("ready", () => {
 			console.log("Connected as " + client.user.tag);
@@ -53,8 +59,8 @@ class Bot {
 					break;
 
 				MessageTransmitter.transmit(
-					"127.0.0.1",
-					501,
+					this.#txAddress,
+					this.#txPort,
 					{
 						sender: msg.member.displayName,
 						message: msg.content
