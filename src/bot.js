@@ -13,7 +13,7 @@ class Bot {
 	/**
 	 * Creates a new instance of this bot
 	 * @param {String} discordToken The bot token you got from discord
-	 * @param {*} port The port the bot should listen on
+	 * @param {number} port The port the bot should listen on
 	 */
 	constructor(discordToken, port) {
 		this.#msgRecv = new MessageReceiver(port);

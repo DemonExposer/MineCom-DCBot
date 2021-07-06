@@ -27,9 +27,14 @@ class MessageReceiver {
 	 */
 	#onConnection(socket) {
 		socket.on("data", chunk => this.#boundChannels.forEach(channel => {
-			var jsonObj = JSON.parse(chunk.toString()); // A message will never be larger than a chunk can handle so this should be fine
-			var msg = (jsonObj["sender"] === undefined) ? jsonObj["message"] : `${jsonObj["sender"]}: ${jsonObj["message"]}`
-			channel.send(msg);
+			try {
+				var jsonObj = JSON.parse(chunk.toString()); // A message will never be larger than a chunk can handle so this should be fine
+				var msg = (jsonObj["sender"] === undefined) ? jsonObj["message"] : `**${jsonObj["sender"]}:** ${jsonObj["message"]}`
+				channel.send(msg);
+			} catch {
+				console.log(`Invalid JSON: ${chunk.toString()}`);
+				channel.send("Message data lost");
+			}
 		}));
 	}
 
