@@ -1,0 +1,19 @@
+{
+  "name": "minecom-dcbot",
+  "version": "1.0.0",
+  "description": "A discord bot connecting a text channel to a Minecraft server's text chat using https://github.com/DemonExposer/MineCom-Plugin",
+  "main": "src/bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DemonExposer/MineCom-DCBot.git"
+  },
+  "author": "Kelvin Bouma",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/DemonExposer/MineCom-DCBot/issues"
+  },
+  "homepage": "https://github.com/DemonExposer/MineCom-DCBot#readme"
+}
