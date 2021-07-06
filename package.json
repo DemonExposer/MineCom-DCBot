@@ -1,6 +1,6 @@
 {
   "name": "minecom-dcbot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A discord bot connecting a text channel to a Minecraft server's text chat using https://github.com/DemonExposer/MineCom-Plugin",
   "main": "src/bot.js",
   "scripts": {
