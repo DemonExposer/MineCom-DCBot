@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/DemonExposer/MineCom-DCBot/issues"
   },
-  "homepage": "https://github.com/DemonExposer/MineCom-DCBot#readme"
+  "homepage": "https://github.com/DemonExposer/MineCom-DCBot#readme",
+  "dependencies": {
+    "discord.js": "^12.5.3"
+  }
 }
