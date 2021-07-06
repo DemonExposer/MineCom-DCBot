@@ -1,4 +1,5 @@
 const Discord = require("discord.js");
+const fs = require("fs");
 const client = new Discord.Client();
 const MessageReceiver = require("./network/messageReceiver.js");
 const MessageTransmitter = require("./network/messageTransmitter.js");
@@ -12,6 +13,7 @@ class Bot {
 	#msgRecv;
 	#txAddress;
 	#txPort;
+	#BOUND_CHANNELS_FILE = "bound_channels.json";
 
 	/**
 	 * Creates a new instance of this bot
@@ -23,11 +25,14 @@ class Bot {
 	constructor(discordToken, rxPort = 500, txAddress = "127.0.0.1", txPort = 501) {
 		this.#txAddress = txAddress;
 		this.#txPort = txPort;
-		this.#msgRecv = new MessageReceiver(rxPort);
+		this.#msgRecv = new MessageReceiver(rxPort, this.#BOUND_CHANNELS_FILE);
 
 		client.on("ready", () => {
 			console.log("Connected as " + client.user.tag);
 			client.user.setActivity("type --help for help");
+			
+			// Reads from this.#BOUND_CHANNELS_FILE and if it doesn't exist, it creates it, if it does exist, it binds all the channels
+			fs.stat(this.#BOUND_CHANNELS_FILE, (err, _) => (err != null) ? fs.writeFile(this.#BOUND_CHANNELS_FILE, "[]", err => err && console.log(err)) : fs.readFile(this.#BOUND_CHANNELS_FILE, (_, data) => JSON.parse(data.toString()).forEach(async channelID => this.#msgRecv.bindChannel(await client.channels.fetch(channelID)))));
 		});
 
 		client.on("message", this.#messageHandler.bind(this));

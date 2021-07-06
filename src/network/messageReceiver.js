@@ -1,4 +1,5 @@
 const {TextChannel} = require("discord.js");
+const fs = require("fs");
 const Net = require("net");
 
 /**
@@ -7,13 +8,15 @@ const Net = require("net");
 class MessageReceiver {
 	#socketServer;
 	#boundChannels;
+	#BOUND_CHANNELS_FILE;
 	#buffer = "";
 
 	/**
 	 * Opens a new server socket on a specified port
 	 * @param {number} port The port the server socket should bind to
 	 */
-	constructor(port) {
+	constructor(port, boundChannelsFileName) {
+		this.#BOUND_CHANNELS_FILE = boundChannelsFileName;
 		this.#socketServer = new Net.Server();
 		this.#boundChannels = [];
 
@@ -53,12 +56,19 @@ class MessageReceiver {
 		});
 	}
 
+	#saveBoundChannels() {
+		var channelIDs = [];
+		this.#boundChannels.forEach(channel => channelIDs.push(channel.id));
+		fs.writeFile(this.#BOUND_CHANNELS_FILE, JSON.stringify(channelIDs), err => err && console.log(err));
+	}
+
 	/**
 	 * Binds a text channel to the bound Minecraft server text chat
 	 * @param {TextChannel} channel The channel to bind
 	 */
 	bindChannel(channel) {
 		this.#boundChannels.push(channel);
+		this.#saveBoundChannels();
 	}
 
 	/**
@@ -68,6 +78,7 @@ class MessageReceiver {
 	unbindChannel(channel) {
 		var elementIndex = this.#boundChannels.indexOf(channel);
 		this.#boundChannels.splice(elementIndex, 1);
+		this.#saveBoundChannels();
 	}
 
 	/**
